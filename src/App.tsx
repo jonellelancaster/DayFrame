@@ -66,6 +66,14 @@ function AppInner() {
 		return () => { cancelled = true; };
 	}, [household.googleAccounts]);
 
+	const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+	useEffect(() => {
+		const check = () => setIsMobile(window.innerWidth < 768);
+		window.addEventListener("resize", check);
+		return () => window.removeEventListener("resize", check);
+	}, []);
+
 	const today = new Date();
 
 	const handleToggleTask = useCallback((taskId: string) => {
@@ -247,9 +255,42 @@ function AppInner() {
 		return { ...household, events: [...household.events, ...taggedGoogleEvents] };
 	}, [household, googleEvents]);
 
+	const mobileApp = (
+		<MobileApp
+			household={mergedHousehold}
+			today={today}
+			onToggleTask={handleToggleTask}
+			onRenameMember={handleRenameMember}
+			onAddMember={handleAddMember}
+			onAddTask={handleAddTask}
+			onAddEvent={handleAddEvent}
+			onDeleteEvent={handleDeleteEvent}
+			onUpdateEvent={handleUpdateEvent}
+			onAddCategory={handleAddCategory}
+			onAddRedeemableReward={handleAddRedeemableReward}
+			onDeleteRedeemableReward={handleDeleteRedeemableReward}
+			onRedeemReward={handleRedeemReward}
+			onConnectGoogle={handleConnectGoogle}
+			onDisconnectGoogle={handleDisconnectGoogle}
+			onToggleGoogleCalendar={handleToggleGoogleCalendar}
+			onRefreshGoogleToken={handleRefreshGoogleToken}
+			onSetGoogleCalendarFilter={handleSetGoogleCalendarFilter}
+			onTagGoogleEvent={handleTagGoogleEvent}
+		/>
+	);
+
+	// On real mobile devices: full-screen, no frame, no toolbar
+	if (isMobile) {
+		return (
+			<div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
+				{mobileApp}
+			</div>
+		);
+	}
+
+	// On desktop/tablet: show toolbar with Mobile + Display toggle
 	return (
 		<div style={{ width: "100vw", height: "100vh", overflow: "hidden", position: "relative" }}>
-			{/* View toggle */}
 			<div
 				style={{
 					position: "fixed",
@@ -266,33 +307,20 @@ function AppInner() {
 			>
 				<button
 					onClick={() => setView("mobile")}
-					style={{
-						...toggleBtn,
-						background: view === "mobile" ? "#1D9E75" : "transparent",
-						color: view === "mobile" ? "#fff" : "#64748b",
-					}}
+					style={{ ...toggleBtn, background: view === "mobile" ? "#1D9E75" : "transparent", color: view === "mobile" ? "#fff" : "#64748b" }}
 				>
 					📱 Mobile
 				</button>
 				<button
 					onClick={() => setView("display")}
-					style={{
-						...toggleBtn,
-						background: view === "display" ? "#1D9E75" : "transparent",
-						color: view === "display" ? "#fff" : "#64748b",
-					}}
+					style={{ ...toggleBtn, background: view === "display" ? "#1D9E75" : "transparent", color: view === "display" ? "#fff" : "#64748b" }}
 				>
 					🖥️ Display
 				</button>
 				<button
 					onClick={toggle}
 					title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-					style={{
-						...toggleBtn,
-						background: "transparent",
-						color: "#64748b",
-						fontSize: 14,
-					}}
+					style={{ ...toggleBtn, background: "transparent", color: "#64748b", fontSize: 14 }}
 				>
 					{mode === "dark" ? "☀️" : "🌙"}
 				</button>
@@ -301,16 +329,7 @@ function AppInner() {
 			{view === "display" && <DisplayMode household={mergedHousehold} today={today} onToggleTask={handleToggleTask} onAddEvent={handleAddEvent} onDeleteEvent={handleDeleteEvent} onUpdateEvent={handleUpdateEvent} onAddCategory={handleAddCategory} />}
 
 			{view === "mobile" && (
-				<div
-					style={{
-						width: "100%",
-						height: "100%",
-						background: "#cbd5e1",
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-					}}
-				>
+				<div style={{ width: "100%", height: "100%", background: "#cbd5e1", display: "flex", alignItems: "center", justifyContent: "center" }}>
 					<div
 						style={{
 							width: 390,
@@ -322,27 +341,7 @@ function AppInner() {
 							border: "8px solid #1e293b",
 						}}
 					>
-						<MobileApp
-							household={mergedHousehold}
-							today={today}
-							onToggleTask={handleToggleTask}
-							onRenameMember={handleRenameMember}
-							onAddMember={handleAddMember}
-							onAddTask={handleAddTask}
-							onAddEvent={handleAddEvent}
-							onDeleteEvent={handleDeleteEvent}
-							onUpdateEvent={handleUpdateEvent}
-							onAddCategory={handleAddCategory}
-							onAddRedeemableReward={handleAddRedeemableReward}
-							onDeleteRedeemableReward={handleDeleteRedeemableReward}
-							onRedeemReward={handleRedeemReward}
-							onConnectGoogle={handleConnectGoogle}
-							onDisconnectGoogle={handleDisconnectGoogle}
-							onToggleGoogleCalendar={handleToggleGoogleCalendar}
-							onRefreshGoogleToken={handleRefreshGoogleToken}
-							onSetGoogleCalendarFilter={handleSetGoogleCalendarFilter}
-							onTagGoogleEvent={handleTagGoogleEvent}
-						/>
+						{mobileApp}
 					</div>
 				</div>
 			)}
