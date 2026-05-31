@@ -9,7 +9,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fission-ai/openspec": "file:../../../JONELL~1/AppData/Local/Temp/openspec-build",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
