@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Household, RedeemableReward, Task, CalendarEvent, GoogleAccount } from "../../types";
+import type { Household, Task, CalendarEvent, GoogleAccount } from "../../types";
 import { CalendarView } from "./CalendarView";
 import { TaskBoard } from "../TaskBoard/TaskBoard";
 import { GoogleCalendarSection } from "./GoogleCalendarSection";
